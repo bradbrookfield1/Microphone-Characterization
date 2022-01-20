@@ -1,0 +1,44 @@
+# Windows default autosave extension
+*.asv
+Thumbs.db*
+ehthumbs*.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# OSX / *nix default autosave extension
+*.m~
+._*
+.DS_Store
+.fseventsd
+.Spotlight-V100
+
+# Compiled MEX binaries (all platforms)
+*.mex*
+
+# Packaged app and toolbox files
+*.mlappinstall
+*.mltbx
+
+# Generated helpsearch folders
+helpsearch*/
+
+# Simulink code generation folders
+slprj/
+sccprj/
+
+# Matlab code generation folders
+codegen/
+
+# Simulink autosave extension
+*.autosave
+
+# Simulink cache files
+*.slxc
+
+# Octave session info
+octave-workspace
+
+# Visual Studio
+.vscode/
+.history/
+*.code-workspace
