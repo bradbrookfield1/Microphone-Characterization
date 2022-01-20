@@ -1,11 +1,11 @@
 function dataCellArray = TraverseFiles
-    levelMeterFiles = dir(pwd);
+    levelMeterFiles = dir;
+    levelMeterFiles = levelMeterFiles(endsWith({levelMeterFiles.name}, '.txt'));
+    
     len = length(levelMeterFiles);
-    dataCellArray = cell(1, (len - 4));
-    j = 1;
-    for i = 3:(len - 2)
+    dataCellArray = cell(1, len);
+    for i = 1:len
         str = fileread(levelMeterFiles(i).name);
-        dataCellArray{j} = LevelMeterDataParser(str);
-        j = j + 1;
+        dataCellArray{i} = LevelMeterDataParser(str);
     end
 end
