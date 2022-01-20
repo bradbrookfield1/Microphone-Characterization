@@ -25,6 +25,19 @@ classdef Mic
 
     methods
         function obj = Mic(name, micVoltFile, freqSpacing, sz, psdFile, sampFreq)
+            % This constructor takes in required voltage data and a few
+            % other details, and then automatically calculates
+            % everything needed and plots the frequency response (FR), the power
+            % spectral density (PSD), and other characteristic details all from
+            % one object instantiation.
+
+            % Required inputs: 
+            % 1. Name for mic
+            % 2. .mat FR voltage file
+            % 3. Frequency range to be covered
+            % 4. Size, or number of elements in the tested frequency range
+            % 5. .mat PSD voltage file
+            % 6. Sampling frequency
             obj.name = name;
             obj.micVoltFile = micVoltFile;
             obj.freqSpacing = freqSpacing;
@@ -75,6 +88,8 @@ classdef Mic
         end
 
         function plotFreqResp(obj)
+            % Plots FR graphs for the mic, the level meter, and then the
+            % normalized response.
             subplot(2, 3, 1);
             plot(obj.freqArray, obj.micVolt);
             set(gca, 'Xscale', 'log');
@@ -99,6 +114,8 @@ classdef Mic
         end
 
         function dispFreqRespDetails(obj)
+            % Displays the mic's mean gain, standard deviation, and
+            % tolerance on the figure.
             ax = subplot(2, 3, 6);
             title('True Frequency Response Details');
             str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGain);
@@ -118,6 +135,9 @@ classdef Mic
         end
 
         function plotPSD(obj)
+            % Plots FR graphs for the mic, the level meter, and then the
+            % normalized response.
+
 %             load(obj.psdFile);
 %             [psd, freqs] = periodogram(micPSDVoltWhite, [], [], obj.sampFreq);
 %             subplot(2, 3, 4);
