@@ -25,6 +25,14 @@ classdef Mic
 
     methods
         function obj = Mic(name, micVoltFile, freqSpacing, sz, psdFile, sampFreq)
+            % This constructor takes in microphone voltage files and other
+            % details, makes necessary normalization calculations, and then
+            % plots the mic's frequency response (FR), power spectral
+            % density (PSD), and additional characterization details all
+            % from once object instantiation.
+
+            % Required inputs
+            % Ex: Mic('My Mic', 'FRVoltFile.mat', [32, 8000], 25, 'PSDVoltFile.mat', 1000);
             obj.name = name;
             obj.micVoltFile = micVoltFile;
             obj.freqSpacing = freqSpacing;
