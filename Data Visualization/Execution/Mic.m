@@ -3,7 +3,7 @@ classdef Mic
     properties
         name
         micVoltFile
-        freqSpacing
+        freqRange
         numFreqs
         micSensDBV
         psdFile
@@ -24,7 +24,7 @@ classdef Mic
     end
 
     methods
-        function obj = Mic(name, micVoltFile, freqSpacing, numFreqs, psdFile, sampFreq)
+        function obj = Mic(name, micVoltFile, freqRange, numFreqs, psdFile, sampFreq)
             % This constructor takes in required voltage data and a few
             % other details, and then automatically calculates
             % everything needed and plots the frequency response (FR), the power
@@ -40,7 +40,7 @@ classdef Mic
             % 6. Sampling frequency
             obj.name = name;
             obj.micVoltFile = micVoltFile;
-            obj.freqSpacing = freqSpacing;
+            obj.freqRange = freqRange;
             obj.numFreqs = numFreqs;
             obj.psdFile = psdFile;
             obj.sampFreq = sampFreq;
@@ -65,6 +65,8 @@ classdef Mic
             obj.lvlVolt = dbsplToVolt(obj);
 
 %             obj.micVolt = avgMicVolt(obj);
+
+            % FIX ME!!! FAKE DATA FOR TESTING!!!
             fakeFreq = obj.freqArray(2:24);
             volt = avgMicVolt(obj, fakeFreq);
             obj.micVolt = [9e-5, volt, 0.0015];
@@ -251,14 +253,14 @@ classdef Mic
         end
 
         function lvlDBCellArray = getLevelMeterData(obj)
-            switch obj.freqSpacing
+            switch obj.freqRange
                 case 'Log'
                     cd 'Log Level Meter Files';
                 otherwise
                     cd 'Lin Level Meter Files';
             end
 
-            switch obj.sz
+            switch obj.numFreqs
                 case 'Large'
                     cd 'Large';
                 case 'Medium'
@@ -273,7 +275,7 @@ classdef Mic
         end
 
         function freqArray = getFreqArray(obj)
-            switch obj.freqSpacing
+            switch obj.freqRange
                 case 'Log'
                     freqArray = getLogFreqArray(obj);
                 otherwise
