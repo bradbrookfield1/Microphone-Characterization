@@ -1,18 +1,28 @@
 classdef Mic
 
     properties
+        % Required inputs:
+        % 1. Name for mic
+        % 2. .mat FR voltage file
+        % 3. Frequency range to be covered
+        % 4. Number of elements in the tested frequency range
+        % 5. .mat PSD voltage file
+        % 6. Sampling frequency
+        % 7. Microphone sensitivity (optional)
         name
         micVoltFile
         freqRange
         numFreqs
-        micSensDBV
         psdFile
         sampFreq
+        micSensDBV % STILL TO BE IMPLEMENTED...
 
+        % Calculated variables:
         micSensVolt
         lvlSensDBV
         lvlSensVolt
-        freqArray
+        logFreqArray
+        linFreqArray
         lvlDBspl
         lvlVolt
         micVolt
@@ -24,20 +34,14 @@ classdef Mic
     end
 
     methods
-        function obj = Mic(name, micVoltFile, freqRange, numFreqs, psdFile, sampFreq)
+        function obj = Mic(name, micVoltFile, freqRange, numFreqs, psdFile, sampFreq, micSensDBV)
             % This constructor takes in required voltage data and a few
             % other details, and then automatically calculates
             % everything needed and plots the frequency response (FR), the power
             % spectral density (PSD), and other characteristic details all from
             % one object instantiation.
 
-            % Required inputs: 
-            % 1. Name for mic
-            % 2. .mat FR voltage file
-            % 3. Frequency range to be covered
-            % 4. Number of elements in the tested frequency range
-            % 5. .mat PSD voltage file
-            % 6. Sampling frequency
+            % Required inputs:
             obj.name = name;
             obj.micVoltFile = micVoltFile;
             obj.freqRange = freqRange;
@@ -46,7 +50,7 @@ classdef Mic
             obj.sampFreq = sampFreq;
 
             % Optional: include mic sensitivity.
-            obj.micSensDBV = 0;
+            obj.micSensDBV = micSensDBV;
             obj.micSensVolt = 10^(obj.micSensDBV/20);
             % Level Meter Sensitivity 10mV/1dB
             % http://www.extech.com/products/resources/HD600_UM-en.pdf
@@ -54,9 +58,10 @@ classdef Mic
             % Converted to sensitivity in dBV leads to -40 dBV sensitivity.
             % https://www.analog.com/media/en/analog-dialogue/volume-46/number-2/articles/understanding_microphone_sensitivity.pdf
             obj.lvlSensDBV = 20*log10(obj.lvlSensVolt);
-            obj.freqArray = getFreqArray(obj);
+            [obj.logFreqArray, obj.linFreqArray] = getFreqArrays(obj.freqRange, obj.numFreqs);
 
 %             obj.lvlDBspl = lvlArrayAvgDB(obj);
+            % FIX ME!!! FAKE DATA FOR TESTING!!!
             obj.lvlDBspl = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
                 82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
 
@@ -65,9 +70,8 @@ classdef Mic
             obj.lvlVolt = dbsplToVolt(obj);
 
 %             obj.micVolt = avgMicVolt(obj);
-
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            fakeFreq = obj.freqArray(2:24);
+            fakeFreq = obj.logFreqArray(2:24);
             volt = avgMicVolt(obj, fakeFreq);
             obj.micVolt = [9e-5, volt, 0.0015];
 
@@ -93,21 +97,21 @@ classdef Mic
             % Plots FR graphs for the mic, the level meter, and then the
             % normalized response.
             subplot(2, 3, 1);
-            plot(obj.freqArray, obj.micVolt);
+            plot(obj.logFreqArray, obj.micVolt);
             set(gca, 'Xscale', 'log');
             set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Mic Voltage Data');
         
             subplot(2, 3, 2);
-            plot(obj.freqArray, obj.lvlVolt);
+            plot(obj.logFreqArray, obj.lvlVolt);
             set(gca, 'Xscale', 'log');
             set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Level Meter Voltage');
         
             subplot(2, 3, 3);
-            plot(obj.freqArray, obj.normDB);
+            plot(obj.logFreqArray, obj.normDB);
             ylim([-80, 0]);
             set(gca, 'Xscale', 'log');
             set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
@@ -123,7 +127,7 @@ classdef Mic
             str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGain);
             str2 = sprintf('Standard Deviation: +-%0.2f dB', obj.stdDev);
             str3 = sprintf('Tolerance: +-%0.2f%%', obj.tolerance);
-            if (obj.micSensDBV == 0)
+            if (obj.micSensDBV == -Inf)
                 str4 = sprintf('Rated Mic Sensitivity (dBV): N/A dBV');
                 str5 = sprintf('Rated Mic Sensitivity (Voltage): N/A V');
             else
@@ -252,81 +256,84 @@ classdef Mic
             end
         end
 
-        function lvlDBCellArray = getLevelMeterData(obj)
-            switch obj.freqRange
-                case 'Log'
-                    cd 'Log Level Meter Files';
-                otherwise
-                    cd 'Lin Level Meter Files';
-            end
-
-            switch obj.numFreqs
-                case 'Large'
-                    cd 'Large';
-                case 'Medium'
-                    cd 'Medium';
-                otherwise
-                    cd 'Small';
-            end
-
-            lvlDBCellArray = TraverseFiles;
+        function [logLvlDBCellArray, linLvlDBCellArray] = getLevelMeterData(obj)
+            cd 'Log Level Meter Files';
+            logLvlDBCellArray = TraverseFiles;
             cd '../';
+            cd 'Lin Level Meter Files';
+            linLvlDBCellArray = TraverseFiles;
             cd '../';
         end
 
-        function freqArray = getFreqArray(obj)
-            switch obj.freqRange
-                case 'Log'
-                    freqArray = getLogFreqArray(obj);
-                otherwise
-                    freqArray = getLinFreqArray(obj);
+%         function freqArray = getFreqArray(obj)
+%             switch obj.freqRange
+%                 case 'Log'
+%                     freqArray = getLogFreqArray(obj);
+%                 otherwise
+%                     freqArray = getLinFreqArray(obj);
+%             end
+%         end
+
+        function [logFreqArray, linFreqArray] = getFreqArrays(freqRange, numFreqs)
+
+            i = linspace(log10(freqRange(1)), log10(freqRange(2)), numFreqs);
+            logFreqArray = zeros([1, length(i)]);
+            for j = 1:length(i)
+                logFreqArray(j) = round(10^(i(j)));
             end
+
+            i = round(linspace(freqRange(1), freqRange(2), numFreqs));
+            linFreqArray = zeros([1, length(i)]);
+            for j = 1:length(i)
+                linFreqArray(j) = i(j);
+            end
+            
         end
 
-        function freqArray = getLogFreqArray(obj)
-            switch obj.numFreqs
-                case 'Large'
-                    i = linspace(log10(32), log10(8000), 100);
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = round(10^(i(j)));
-                    end
-                case 'Medium'
-                    i = linspace(log10(32), log10(8000), 50);
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = round(10^(i(j)));
-                    end
-                otherwise
-                    i = linspace(log10(32), log10(8000), 25);
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = round(10^(i(j)));
-                    end
-            end
-        end
+%         function freqArray = getLogFreqArray(obj)
+%             switch obj.numFreqs
+%                 case 'Large'
+%                     i = linspace(log10(32), log10(8000), 100);
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = round(10^(i(j)));
+%                     end
+%                 case 'Medium'
+%                     i = linspace(log10(32), log10(8000), 50);
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = round(10^(i(j)));
+%                     end
+%                 otherwise
+%                     i = linspace(log10(32), log10(8000), 25);
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = round(10^(i(j)));
+%                     end
+%             end
+%         end
 
-        function freqArray = getLinFreqArray(obj)
-            switch obj.numFreqs
-                case 'Large'
-                    i = round(linspace(32, 8000, 100));
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = i(j);
-                    end
-                case 'Medium'
-                    i = round(linspace(32, 8000, 50));
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = i(j);
-                    end
-                otherwise
-                    i = round(linspace(32, 8000, 25));
-                    freqArray = zeros([1, length(i)]);
-                    for j = 1:length(i)
-                        freqArray(j) = i(j);
-                    end
-            end
-        end
+%         function freqArray = getLinFreqArray(obj)
+%             switch obj.numFreqs
+%                 case 'Large'
+%                     i = round(linspace(32, 8000, 100));
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = i(j);
+%                     end
+%                 case 'Medium'
+%                     i = round(linspace(32, 8000, 50));
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = i(j);
+%                     end
+%                 otherwise
+%                     i = round(linspace(32, 8000, 25));
+%                     freqArray = zeros([1, length(i)]);
+%                     for j = 1:length(i)
+%                         freqArray(j) = i(j);
+%                     end
+%             end
+%         end
     end
 end
