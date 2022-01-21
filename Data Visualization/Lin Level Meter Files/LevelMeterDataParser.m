@@ -1,4 +1,5 @@
 function dataArray = LevelMeterDataParser(str)
+    % Parses the data for a level meter .txt file.
     if str(57) == ';'
         initOffset = 57;
     else
