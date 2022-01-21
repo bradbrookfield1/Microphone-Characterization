@@ -4,7 +4,7 @@ classdef Mic
         name
         micVoltFile
         freqSpacing
-        sz
+        numFreqs
         micSensDBV
         psdFile
         sampFreq
@@ -24,7 +24,7 @@ classdef Mic
     end
 
     methods
-        function obj = Mic(name, micVoltFile, freqSpacing, sz, psdFile, sampFreq)
+        function obj = Mic(name, micVoltFile, freqSpacing, numFreqs, psdFile, sampFreq)
             % This constructor takes in required voltage data and a few
             % other details, and then automatically calculates
             % everything needed and plots the frequency response (FR), the power
@@ -35,13 +35,13 @@ classdef Mic
             % 1. Name for mic
             % 2. .mat FR voltage file
             % 3. Frequency range to be covered
-            % 4. Size, or number of elements in the tested frequency range
+            % 4. Number of elements in the tested frequency range
             % 5. .mat PSD voltage file
             % 6. Sampling frequency
             obj.name = name;
             obj.micVoltFile = micVoltFile;
             obj.freqSpacing = freqSpacing;
-            obj.sz = sz;
+            obj.numFreqs = numFreqs;
             obj.psdFile = psdFile;
             obj.sampFreq = sampFreq;
 
@@ -282,7 +282,7 @@ classdef Mic
         end
 
         function freqArray = getLogFreqArray(obj)
-            switch obj.sz
+            switch obj.numFreqs
                 case 'Large'
                     i = linspace(log10(32), log10(8000), 100);
                     freqArray = zeros([1, length(i)]);
@@ -305,7 +305,7 @@ classdef Mic
         end
 
         function freqArray = getLinFreqArray(obj)
-            switch obj.sz
+            switch obj.numFreqs
                 case 'Large'
                     i = round(linspace(32, 8000, 100));
                     freqArray = zeros([1, length(i)]);
