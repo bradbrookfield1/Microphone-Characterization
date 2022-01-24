@@ -99,24 +99,17 @@ classdef Mic
             % Plots FR graphs for the mic, the level meter, and then the
             % normalized response.
             subplot(2, 3, 1);
-            plot(obj.logFreqArray, obj.micVolt);
-            set(gca, 'Xscale', 'log');
-            set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
+            semilogx(obj.logFreqArray, obj.micVolt); grid on;
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Mic Voltage Data');
         
             subplot(2, 3, 2);
-            plot(obj.logFreqArray, obj.lvlVolt);
-            set(gca, 'Xscale', 'log');
-            set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
+            semilogx(obj.logFreqArray, obj.lvlVolt); grid on;
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Level Meter Voltage');
         
             subplot(2, 3, 3);
-            plot(obj.logFreqArray, obj.normDB);
-            ylim([-80, 0]);
-            set(gca, 'Xscale', 'log');
-            set(gca, 'XTickLabel', {'10', '100', '1000', '10000'});
+            semilogx(obj.logFreqArray, obj.normDB); grid on; ylim([-80, 0]);
             xlabel('Frequency (Hz)'); ylabel('Normalized Mic Voltage Gain (dB)');
             title('True Frequency Response');
         end
@@ -163,7 +156,7 @@ classdef Mic
             [pxx, f] = periodogram(x, rectwin(length(x)), length(x), obj.sampFreq);
             plot(f, 10*log10(pxx));
             xlabel('Hz'); ylabel('dB/Hz');
-            title('Power Spectral Density (Sine Wave)');
+            title('Power Spectral Density');
         end
 
         function micVoltAvg = avgMicVolt(obj, freqArray)
