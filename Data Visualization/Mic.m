@@ -60,6 +60,8 @@ classdef Mic
             obj.lvlSensDBV = 20*log10(obj.lvlSensVolt);
             [obj.logFreqArray, obj.linFreqArray] = getFreqArrays(obj);
 
+            % COME READ ME!!! https://acousticnature.com/journal/which-microphone-sensitivity-is-better-dbv-vs-mv
+
 %             obj.lvlDBspl = lvlArrayAvgDB(obj);
             % FIX ME!!! FAKE DATA FOR TESTING!!!
             obj.lvlDBspl = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
