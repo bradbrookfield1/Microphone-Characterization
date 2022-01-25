@@ -23,11 +23,17 @@ classdef Mic
         lvlSensVolt
         logFreqArray
         linFreqArray
-        lvlDBspl
-        lvlVolt
-        micVolt
-        normVolt
-        normDB
+        freqArray
+        lvlDBsplFR
+        lvlDBsplPSD
+        lvlVoltFR
+        lvlVoltPSD
+        micVoltFR
+        micVoltPSD
+        normVoltFR
+        normVoltPSD
+        normDBFR
+        normDBPSD
         meanGain
         stdDev
         tolerance
@@ -62,29 +68,36 @@ classdef Mic
 
             % COME READ ME!!! https://acousticnature.com/journal/which-microphone-sensitivity-is-better-dbv-vs-mv
 
-%             obj.lvlDBspl = lvlArrayAvgDB(obj);
+%             obj.lvlDBsplFR = lvlArrayAvgDB(obj);
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            obj.lvlDBspl = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
+            obj.lvlDBsplFR = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
+                82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
+
+%             obj.lvlDBsplFR = lvlArrayAvgDB(obj);
+            % FIX ME!!! FAKE DATA FOR TESTING!!!
+            obj.lvlDBsplPSD = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
                 82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
 
             % Convert sound pressure dB to voltage:
             % https://electronics.stackexchange.com/questions/96205/how-to-convert-volts-to-db-spl
-            obj.lvlVolt = dbsplToVolt(obj);
+            obj.lvlVoltFR = dbsplToVolt(obj, 'Log');
+            obj.lvlVoltPSD = dbsplToVolt(obj, 'Lin');
 
-%             obj.micVolt = avgMicVolt(obj);
+%             obj.micVoltFR = avgMicVolt(obj, 'Log');
+%             obj.micVoltPSD = avgMicVolt(obj, 'Lin');
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            fakeFreq = obj.logFreqArray(2:24);
-            volt = avgMicVolt(obj, fakeFreq);
-            obj.micVolt = [9e-5, volt, 0.0015];
+            obj.freqArray = obj.logFreqArray(2:24);
+            volt = avgMicVolt(obj, 'Log');
+            obj.micVoltFR = [9e-5, volt, 0.0015];
 
             % Normalize two data sets via voltage gain ratio.
-            obj.normVolt = obj.micVolt./obj.lvlVolt;
+            obj.normVoltFR = obj.micVoltFR./obj.lvlVoltFR;
             % Convert to dB.
-            obj.normDB = 20*log10(obj.normVolt);
+            obj.normDBFR = 20*log10(obj.normVoltFR);
             % Find the mean gain, the standard deviation, and the
             % corresponding tolerance percentage.
-            obj.meanGain = sum(obj.normDB)/length(obj.normDB);
-            obj.stdDev = sqrt((sum(obj.normDB.^2)/length(obj.normDB)) - (obj.meanGain^2));
+            obj.meanGain = sum(obj.normDBFR)/length(obj.normDBFR);
+            obj.stdDev = sqrt((sum(obj.normDBFR.^2)/length(obj.normDBFR)) - (obj.meanGain^2));
             obj.tolerance = (((obj.meanGain - obj.stdDev) - obj.meanGain)*100)/obj.meanGain;
 
             % Display all results.
@@ -157,21 +170,39 @@ classdef Mic
             plot(f, 10*log10(pxx));
             xlabel('Hz'); ylabel('dB/Hz');
             title('Power Spectral Density');
+
+%             subplot(2, 3, 5);
+%             t = 0:1/obj.sampFreq:1-1/obj.sampFreq;
+% 
+%             % Build the signal into its frequency components.
+%             for i = 1:length(x)
+% 
+% 
+%             x = cos(2*pi*100*t) + sin(2*pi*150*t) + randn(size(t));
+%             [pxx, f] = periodogram(x, rectwin(length(x)), length(x), obj.sampFreq);
+%             plot(f, 10*log10(pxx));
+%             xlabel('Hz'); ylabel('dB/Hz');
+%             title('Power Spectral Density');
         end
 
-        function micVoltAvg = avgMicVolt(obj, freqArray)
+        function builtSignal = buildPSDSig(obj)
+            hello
+        end
+
+
+        function micVoltAvg = avgMicVolt(obj)
             % Parses and averages the many recorded voltages for each
             % frequency and condenses the averaged values into one 1D
             % voltage array.
 
             load(obj.micVoltFile);
-            freqArrayStr = string(freqArray);
+            freqArrayStr = string(obj.freqArray);
             % micVoltArray50 = MicProgramDataParser(a_50);
             % micVoltArray63 = MicProgramDataParser(a_63);
             % micVoltArray79 = MicProgramDataParser(a_79); ...
             for i = 1:length(freqArrayStr)
                 micVoltArray = genvarname(['micVoltArray', char(freqArrayStr(i))]);
-                str = sprintf(' = MicProgramDataParser(obj, a_%d);', freqArray(i));
+                str = sprintf(' = MicProgramDataParser(obj, a_%d);', obj.freqArray(i));
                 eval([micVoltArray, str]);
             end
             
@@ -180,7 +211,7 @@ classdef Mic
             % micVoltAvg79 = sum(micVoltArray79)/length(micVoltArray79); ...
             for i = 1:length(freqArrayStr)
                 micVoltAvg = genvarname(['micVoltAvg', char(freqArrayStr(i))]);
-                str = sprintf(' = sum(micVoltArray%d)/length(micVoltArray%d);', freqArray(i), freqArray(i));
+                str = sprintf(' = sum(micVoltArray%d)/length(micVoltArray%d);', obj.freqArray(i), obj.freqArray(i));
                 eval([micVoltAvg, str]);
             end
         
@@ -230,17 +261,23 @@ classdef Mic
             end
         end
 
-        function lvlVolt = dbsplToVolt(obj)
+        function lvlVolt = dbsplToVolt(obj, spacing)
             % Converts the DBspl gain from the level meter to voltage. The
             % level meter mic sensitivity is needed to properly calculate
             % this.
 
+            if (strcmp(spacing, 'Log'))
+                lvlDBspl = obj.lvlDBsplFR;
+            else
+                lvlDBspl = obj.lvlDBsplPSD;
+            end
+
             % Calculations reference:
             % https://electronics.stackexchange.com/questions/96205/how-to-convert-volts-to-db-spl
-            lvlVolt = zeros([1, length(obj.lvlDBspl)]);
-            for i = 1:length(obj.lvlDBspl)
+            lvlVolt = zeros([1, length(lvlDBspl)]);
+            for i = 1:length(lvlDBspl)
                 % Subtract unit Pascal, 1 Pa = 94 dB.
-                lvlVolt(i) = obj.lvlDBspl(i) - 94;
+                lvlVolt(i) = lvlDBspl(i) - 94;
                 % Subtract the level meter microphone sensitivity.
                 lvlVolt(i) = lvlVolt(i) - obj.lvlSensDBV;
                 % Convert from dB to voltage gain ratio. 
