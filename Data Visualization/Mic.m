@@ -23,7 +23,6 @@ classdef Mic
         lvlSensVolt
         logFreqArray
         linFreqArray
-        freqArray
         lvlDBsplFR
         lvlDBsplPSD
         lvlVoltFR
@@ -112,17 +111,17 @@ classdef Mic
             % Plots FR graphs for the mic, the level meter, and then the
             % normalized response.
             subplot(2, 3, 1);
-            semilogx(obj.logFreqArray, obj.micVolt); grid on;
+            semilogx(obj.logFreqArray, obj.micVoltFR); grid on;
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Mic Voltage Data');
         
             subplot(2, 3, 2);
-            semilogx(obj.logFreqArray, obj.lvlVolt); grid on;
+            semilogx(obj.logFreqArray, obj.lvlVoltFR); grid on;
             xlabel('Frequency (Hz)'); ylabel('Voltage (V)');
             title('Level Meter Voltage');
         
             subplot(2, 3, 3);
-            semilogx(obj.logFreqArray, obj.normDB); grid on; ylim([-80, 0]);
+            semilogx(obj.logFreqArray, obj.normDBFR); grid on; ylim([-80, 0]);
             xlabel('Frequency (Hz)'); ylabel('Normalized Mic Voltage Gain (dB)');
             title('True Frequency Response');
         end
@@ -195,14 +194,20 @@ classdef Mic
             % frequency and condenses the averaged values into one 1D
             % voltage array.
 
+            if (strcmp(spacing, 'Log'))
+                freqArray = obj.logFreqArray;
+            else
+                freqArray = obj.linFreqArray;
+            end
+
             load(obj.micVoltFile);
-            freqArrayStr = string(obj.freqArray);
+            freqArrayStr = string(freqArray);
             % micVoltArray50 = MicProgramDataParser(a_50);
             % micVoltArray63 = MicProgramDataParser(a_63);
             % micVoltArray79 = MicProgramDataParser(a_79); ...
             for i = 1:length(freqArrayStr)
                 micVoltArray = genvarname(['micVoltArray', char(freqArrayStr(i))]);
-                str = sprintf(' = MicProgramDataParser(obj, a_%d);', obj.freqArray(i));
+                str = sprintf(' = MicProgramDataParser(obj, a_%d);', freqArray(i));
                 eval([micVoltArray, str]);
             end
             
@@ -211,7 +216,7 @@ classdef Mic
             % micVoltAvg79 = sum(micVoltArray79)/length(micVoltArray79); ...
             for i = 1:length(freqArrayStr)
                 micVoltAvg = genvarname(['micVoltAvg', char(freqArrayStr(i))]);
-                str = sprintf(' = sum(micVoltArray%d)/length(micVoltArray%d);', obj.freqArray(i), obj.freqArray(i));
+                str = sprintf(' = sum(micVoltArray%d)/length(micVoltArray%d);', freqArray(i), freqArray(i));
                 eval([micVoltAvg, str]);
             end
         
