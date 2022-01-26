@@ -10,5 +10,5 @@ This program gives engineers and scientists the capability of characterizing mic
 3. ExTech HD600: Datalogging Sound Level Meter
 - English User's Manual: http://www.extech.com/products/resources/HD600_UM-en.pdf
 - Data-logging app installation is on the flash drive that is included with the level meter. Installation details are given with its documentation.
-4. MATLAB 2021b Release
+4. MATLAB Version: 2021b Update 2 (9.11.0.1837725)
 - Instrument Control is a supplemental MATLAB app that is also required.
