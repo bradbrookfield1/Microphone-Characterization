@@ -1,6 +1,6 @@
 close all; clear; clc;
 
-% Mic(name, micVoltFile, freqRange, numFreqs, psdFile, sampFreq, micSensDBV);
+% Mic(name, micVoltFile, freqRange, numFreqs, sampFreq, micSensDBV);
 
 % This is an analog signal, so the sampling frequency is essentially
 % infinity, but we will assume a somewhat high number to keep the program
