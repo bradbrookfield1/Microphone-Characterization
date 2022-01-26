@@ -7,4 +7,5 @@ This program gives engineers and scientists the capability of characterizing mic
 2. National Instruments GPIB-USB-B Adapter
 - FIX ME!!! and proper drivers and Keysight software connection interface
 3. ExTech HD600: Datalogging Sound Level Meter
-- Datalogging App
+- English User's Manual: http://www.extech.com/products/resources/HD600_UM-en.pdf
+- Data-logging app installation is on the flash drive that is included with the level meter. Installation details are given with its documentation.
