@@ -1,4 +1,4 @@
-# Microphone-Characterization
+# Microphone-Characterization (Incomplete)
 Obtain frequency response and power spectral density plots from microphone voltage data using MATLAB.
 
 This program gives engineers and scientists the capability of characterizing microphones and other input audio devices with techniques including frequency response, sensitivity, and power spectral density analysis. Tools that are used in the Data Retrieval portion of this program include:
