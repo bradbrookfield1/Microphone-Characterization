@@ -29,7 +29,7 @@ This program gives engineers and scientists the capability of characterizing mic
 5. MATLAB Version: 2021b Update 2 (9.11.0.1837725)
     - Instrument Control is a supplemental MATLAB app that is also required.
 
-An additional necessary tool is a speaker set of some sort that the audio analyzer is able to connect to.
+An additional necessary tool is a set of speakers that the audio analyzer is able to connect to. It does not matter too much what speakers are used. However, if it is crucial for you to observe a wide range of frequencies, it is recommended that ones suitable for that range are used.
 
 Now that all of the tools are accounted for, let's break down how to apply this program.
 
