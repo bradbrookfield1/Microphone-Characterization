@@ -29,10 +29,16 @@ This program gives engineers and scientists the capability of characterizing mic
 5. MATLAB Version: 2021b Update 2 (9.11.0.1837725)
     - Instrument Control is a supplemental MATLAB app that is also required.
 
+An additional necessary tool is a speaker set of some sort that the audio analyzer is able to connect to.
+
 Now that all of the tools are accounted for, let's break down how to apply this program.
 
 ## Data Retrieval
-Assuming everything is properly installed, the first step is to connect the GPIB to the back of the audio analyzer, turn on the device, and the computer open the Keysight VEE Pro Runtime app.
+### Setup
+Assuming everything is properly installed, the first step is to connect the GPIB adapter to the back of the audio analyzer, turn on the device, and the computer open the Keysight VEE Pro Runtime app. In the Instrument Manager window, click "Find" to prompt and establish connection with the GPIB adapter. (If you get a warning and connection is not clearly established, make sure that everything is plugged in properly and that the audio analyzer is turned on, or else it will not connect.) Then, leave that app running the entire time that the MATLAB Data Retrieval program is being run.
+
+### Procedure
+Now open MATLAB and navigate to the Tools folder and open FrequencyTool.m. The freqRange variable establishes
 
 ## Data Visualization
 The
