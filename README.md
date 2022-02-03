@@ -24,21 +24,21 @@ This program gives engineers and scientists the capability of characterizing mic
 
 4. ExTech HD600: Datalogging Sound Level Meter
     - English User's Manual: http://www.extech.com/products/resources/HD600_UM-en.pdf
+    - Note: The rated frequency range of this meter is 31.5 Hz - 8 kHz.
     - Data-logging app installation is on the flash drive that is included with the level meter. Installation details are given with its documentation.
 
 5. MATLAB Version: 2021b Update 2 (9.11.0.1837725)
     - Instrument Control is a supplemental MATLAB app that is also required.
 
-An additional necessary tool is a set of speakers that the audio analyzer is able to connect to. It does not matter too much what speakers are used. However, if it is crucial for you to observe a wide range of frequencies, it is recommended that ones suitable for that range are used.
-
-Now that all of the tools are accounted for, let's break down how to apply this program.
+An additional necessary tool is a set of speakers that the audio analyzer is able to connect to. It does not matter too much what speakers are used. However, if it is crucial for you to observe a wide range of frequencies, it is recommended that ones suitable for that range are used. The speakers that we used were ones we had on hand, which were the Altec Lansing ACS90 Multimedia Computer Speakers, along with the ACS160 Subwoofer. The frequency range of the stereo speakers is 90 Hz - 20 kHz, but then with the subwoofer, frequencies as low as 30 Hz can be reached, and this was more than enough for our purposes. These speakers connect via 3.5mm jacks, and the audio analyzer can ruggedly be connected to this with an SDI to alligator clips adapter that tightly clips onto the 3.5mm cable. Eventually, we ended up using this enough that we soldered our own SDI to 3.5mm adapter for easier setup. For whatever speakers decided for use, if ones with a flatter frequency response are chosen, this may make the data ever so slightly more accurate. All audio systems will be accounted for and normalized in this program though, so having top quality speakers is not an incredible issue. Now that all of the tools are accounted for, let's break down how to apply this program.
 
 ## Data Retrieval
 ### Setup
 Assuming everything is properly installed, the first step is to connect the GPIB adapter to the back of the audio analyzer, turn on the device, and the computer open the Keysight VEE Pro Runtime app. In the Instrument Manager window, click "Find" to prompt and establish connection with the GPIB adapter. (If you get a warning and connection is not clearly established, make sure that everything is plugged in properly and that the audio analyzer is turned on, or else it will not connect.) Then, leave that app running the entire time that the MATLAB Data Retrieval program is being run.
 
 ### Procedure
-Now open MATLAB and navigate to the Tools folder and open FrequencyTool.m. The freqRange variable establishes
+Now open MATLAB and navigate to the Tools folder and open FrequencyTool.m.
 
 ## Data Visualization
+### Procedure
 The
