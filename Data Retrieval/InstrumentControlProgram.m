@@ -48,16 +48,16 @@ for i = 1:length(logfreqArray)
     obj1.EOSMode = 'write';
     strWrite = [str1, char(logfreqArrayStr(i)), str2];
     fprintf(obj1, strWrite);
-    a = genvarname(['logA_', char(string(logfreqArray(i)))]);
-    eval([a, strStartFreqList]);
-    tEl = genvarname(['logTElapsed_', char(string(logfreqArray(i)))]);
+    fr = genvarname(['fr_', char(string(logfreqArray(i)))]);
+    eval([fr, strStartFreqList]);
+    tEl = genvarname(['tFR_', char(string(logfreqArray(i)))]);
     pause('on');
     pause(2);
     pause('off');
     tStart = tic;
     for j = 1:ptsPerFreq
         obj1.EOSMode = 'read';
-        eval([a, '(j)', strRead]);
+        eval([fr, '(j)', strRead]);
         obj1.EOSMode = 'write';
         fprintf(obj1, strWrite);
 %         pause('on');
@@ -74,16 +74,16 @@ for i = 1:length(linfreqArray)
     obj1.EOSMode = 'write';
     strWrite = [str1, char(linfreqArrayStr(i)), str2];
     fprintf(obj1, strWrite);
-    a = genvarname(['linA_', char(string(linfreqArray(i)))]);
-    eval([a, strStartFreqList]);
-    tEl = genvarname(['linTElapsed_', char(string(linfreqArray(i)))]);
+    psd = genvarname(['psd_', char(string(linfreqArray(i)))]);
+    eval([psd, strStartFreqList]);
+    tEl = genvarname(['tPSD_', char(string(linfreqArray(i)))]);
     pause('on');
     pause(2);
     pause('off');
     tStart = tic;
     for j = 1:ptsPerFreq
         obj1.EOSMode = 'read';
-        eval([a, '(j)', strRead]);
+        eval([psd, '(j)', strRead]);
         obj1.EOSMode = 'write';
         fprintf(obj1, strWrite);
 %         pause('on');

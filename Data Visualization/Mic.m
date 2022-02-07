@@ -65,23 +65,23 @@ classdef Mic
 
             % COME READ ME!!! https://acousticnature.com/journal/which-microphone-sensitivity-is-better-dbv-vs-mv
 
-%             [obj.lvlDBsplFR, obj.lvlDBsplPSD] = lvlArrayAvgDB(obj);
+            [obj.lvlDBsplFR, obj.lvlDBsplPSD] = lvlArrayAvgDB(obj);
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            obj.lvlDBsplFR = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
-                82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
+%             obj.lvlDBsplFR = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
+%                 82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            obj.lvlDBsplPSD = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
-                82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
+%             obj.lvlDBsplPSD = [56.4, 61.7, 72.5, 80.1, 88, 90.1, 87.2, 87, 82.9, 80.8, 80.4, 79, ...
+%                 82, 80.3, 84.5, 82, 89, 87.4, 88.2, 86.3, 87.3, 85.7, 85.3, 88.6, 87];
 
             % Convert sound pressure dB to voltage:
             % https://electronics.stackexchange.com/questions/96205/how-to-convert-volts-to-db-spl
             [obj.lvlVoltFR, obj.lvlVoltPSD] = dbsplToVolt(obj);
 
-%             [obj.micVoltFR, obj.micVoltPSD] = avgMicVolt(obj);
+            [obj.micVoltFR, obj.micVoltPSD] = avgMicVolt(obj);
             % FIX ME!!! FAKE DATA FOR TESTING!!!
-            obj.freqArray = obj.logFreqArray(2:24);
-            [volt, ~] = avgMicVolt(obj);
-            obj.micVoltFR = [9e-5, volt, 0.0015];
+%             obj.freqArray = obj.logFreqArray(2:24);
+%             [volt, ~] = avgMicVolt(obj);
+%             obj.micVoltFR = [9e-5, volt, 0.0015];
 
             % Normalize the data sets.
             obj.normVoltFR = obj.micVoltFR./obj.lvlVoltFR;
