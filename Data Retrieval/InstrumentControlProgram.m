@@ -29,8 +29,10 @@ ptsPerFreq = 10;
 [logfreqArray, linfreqArray] = getFreqArrays([32, 8000], 25);
 
 logfreqArrayStr = strings([1, length(logfreqArray)]);
+linfreqArrayStr = strings([1, length(linfreqArray)]);
 for i = 1:length(logfreqArray)
     logfreqArrayStr(i) = convertCharsToStrings([num2str(logfreqArray(i)), '.0']);
+    linfreqArrayStr(i) = convertCharsToStrings([num2str(linfreqArray(i)), '.0']);
 end
 
 str1 = 'FR';
@@ -41,13 +43,14 @@ strRead = ' = convertCharsToStrings(fscanf(obj1, ''%s''));';
 strStartFreqList = ' = strings([1, ptsPerFreq]);';
 strRecTime = ' = toc(tStart);';
 
+% For logarithmically spaced array for FR plots.
 for i = 1:length(logfreqArray)
     obj1.EOSMode = 'write';
     strWrite = [str1, char(logfreqArrayStr(i)), str2];
     fprintf(obj1, strWrite);
-    a = genvarname(['a_', char(string(logfreqArray(i)))]);
+    a = genvarname(['logA_', char(string(logfreqArray(i)))]);
     eval([a, strStartFreqList]);
-    tEl = genvarname(['tElapsed_', char(string(logfreqArray(i)))]);
+    tEl = genvarname(['logTElapsed_', char(string(logfreqArray(i)))]);
     pause('on');
     pause(2);
     pause('off');
@@ -65,9 +68,35 @@ for i = 1:length(logfreqArray)
     obj1.EOSMode = 'read';
     eval(['junk', strRead]);
 end
+
+% For linearly spaced array for PSD plots.
+for i = 1:length(linfreqArray)
+    obj1.EOSMode = 'write';
+    strWrite = [str1, char(linfreqArrayStr(i)), str2];
+    fprintf(obj1, strWrite);
+    a = genvarname(['linA_', char(string(linfreqArray(i)))]);
+    eval([a, strStartFreqList]);
+    tEl = genvarname(['linTElapsed_', char(string(linfreqArray(i)))]);
+    pause('on');
+    pause(2);
+    pause('off');
+    tStart = tic;
+    for j = 1:ptsPerFreq
+        obj1.EOSMode = 'read';
+        eval([a, '(j)', strRead]);
+        obj1.EOSMode = 'write';
+        fprintf(obj1, strWrite);
+%         pause('on');
+%         pause(2);
+%         pause('off');
+    end    
+    eval([tEl, strRecTime]);  
+    obj1.EOSMode = 'read';
+    eval(['junk', strRead]);
+end
+
 obj1.EOSMode = 'write';
 fprintf(obj1, 'FR50.0HZAP0.0VLM1LNL0LNT3');
-
 save('newMic1freqResp3-10pt.mat');
 
 %% Disconnect and Clean Up
