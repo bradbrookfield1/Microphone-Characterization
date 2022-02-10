@@ -8,4 +8,4 @@ close all; clear; clc;
 
 % If no micSensDBV, leave as -Inf.
 
-Mic('This Mic', 'newMic1freqResp2-10pt.mat', [32, 8000], 25, 100000, -Inf);
+Mic('This Mic', 'newMic1freqResp2-10pt.mat', [32, 8000], 25, 16000, -Inf);
