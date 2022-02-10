@@ -89,7 +89,7 @@ classdef Mic
             % Convert to dB.
             obj.normDBFR = 20*log10(obj.normVoltFR);
             % Find the mean gain, the standard deviation, and the
-            % corresponding tolerance percentage for FR.
+            % corresponding tolerance percentage.
             obj.meanGain = sum(obj.normDBFR)/length(obj.normDBFR);
             obj.stdDev = sqrt((sum(obj.normDBFR.^2)/length(obj.normDBFR)) - (obj.meanGain^2));
             obj.tolerance = (((obj.meanGain - obj.stdDev) - obj.meanGain)*100)/obj.meanGain;
@@ -118,14 +118,14 @@ classdef Mic
             subplot(2, 4, 3);
             semilogx(obj.logFreqArray, obj.normDBFR); grid on; ylim([-80, 0]);
             xlabel('Frequency (Hz)'); ylabel('Normalized Mic Voltage Gain (dB)');
-            title('True Frequency Response');
+            title('Normalized Frequency Response');
         end
 
         function dispFreqRespDetails(obj)
             % Displays the mic FR mean gain, standard deviation, and
             % tolerance on the figure.
             ax = subplot(2, 4, 4);
-            title('True Frequency Response Details');
+            title('Normalized Frequency Response Details');
             str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGain);
             str2 = sprintf('Standard Deviation: +-%0.2f dB', obj.stdDev);
             str3 = sprintf('Tolerance: +-%0.2f%%', obj.tolerance);
@@ -172,7 +172,6 @@ classdef Mic
 %                 x = sin(2*pi*150*t) + randn(size(t));
             end
         end
-
 
         function [logMicVoltAvg, linMicVoltAvg] = avgMicVolt(obj)
             % Parses and averages the many recorded voltages for each
