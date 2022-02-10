@@ -32,9 +32,12 @@ classdef Mic
         normVoltPSD
         normDBFR
         normDBPSD
-        meanGain
-        stdDev
-        tolerance
+        meanGainFR
+        meanGainPSD
+        stdDevFR
+        stdDevPSD
+        toleranceFR
+        tolerancePSD
     end
 
     methods
@@ -88,21 +91,26 @@ classdef Mic
             obj.normVoltPSD = obj.micVoltPSD./obj.lvlVoltPSD;
             % Convert to dB.
             obj.normDBFR = 20*log10(obj.normVoltFR);
+            obj.normDBPSD = 20*log10(obj.normVoltPSD);
             % Find the mean gain, the standard deviation, and the
             % corresponding tolerance percentage.
-            obj.meanGain = sum(obj.normDBFR)/length(obj.normDBFR);
-            obj.stdDev = sqrt((sum(obj.normDBFR.^2)/length(obj.normDBFR)) - (obj.meanGain^2));
-            obj.tolerance = (((obj.meanGain - obj.stdDev) - obj.meanGain)*100)/obj.meanGain;
+            obj.meanGainFR = sum(obj.normDBFR)/length(obj.normDBFR);
+            obj.meanGainPSD = sum(obj.normDBPSD)/length(obj.normDBPSD);
+            obj.stdDevFR = sqrt((sum(obj.normDBFR.^2)/length(obj.normDBFR)) - (obj.meanGainFR^2));
+            obj.stdDevPSD = sqrt((sum(obj.normDBPSD.^2)/length(obj.normDBPSD)) - (obj.meanGainPSD^2));
+            obj.toleranceFR = (((obj.meanGainFR - obj.stdDevFR) - obj.meanGainFR)*100)/obj.meanGainFR;
+            obj.tolerancePSD = (((obj.meanGainPSD - obj.stdDevPSD) - obj.meanGainPSD)*100)/obj.meanGainPSD;
 
             % Display all results.
             figure('Name', obj.name, 'NumberTitle', 'off');
             set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
-            plotFreqResp(obj);
-            dispFreqRespDetails(obj);
+            plotFR(obj);
+            dispFRDetails(obj);
             plotPSD(obj);
+            dispPSDDetails(obj);
         end
 
-        function plotFreqResp(obj)
+        function plotFR(obj)
             % Plots FR graphs for the mic, the level meter, and then the
             % normalized response.
             subplot(2, 4, 1);
@@ -121,14 +129,14 @@ classdef Mic
             title('Normalized Frequency Response');
         end
 
-        function dispFreqRespDetails(obj)
+        function dispFRDetails(obj)
             % Displays the mic FR mean gain, standard deviation, and
             % tolerance on the figure.
             ax = subplot(2, 4, 4);
             title('Normalized Frequency Response Details');
-            str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGain);
-            str2 = sprintf('Standard Deviation: +-%0.2f dB', obj.stdDev);
-            str3 = sprintf('Tolerance: +-%0.2f%%', obj.tolerance);
+            str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGainFR);
+            str2 = sprintf('Standard Deviation: +-%0.2f dB', obj.stdDevFR);
+            str3 = sprintf('Tolerance: +-%0.2f%%', obj.toleranceFR);
             str = [str1, newline, str2, newline, str3];
             if (obj.micSensDBV ~= -Inf)
                 str4 = sprintf('Rated Mic Sensitivity (dBV): %0.2f dBV', obj.micSensDBV);
@@ -162,6 +170,20 @@ classdef Mic
             plot(fNorm, 10*log10(pNorm));
             xlabel('Hz'); ylabel('dB/Hz');
             title('Normalized Power Spectral Density');
+        end
+
+        function dispPSDDetails(obj)
+            % Displays the mic FR mean gain, standard deviation, and
+            % tolerance on the figure.
+            ax = subplot(2, 4, 8);
+            title('Normalized Power Spectral Density Details');
+            str1 = sprintf('Mean Normalized Gain: %0.2f dB', obj.meanGainPSD);
+            str2 = sprintf('Standard Deviation: +-%0.2f dB', obj.stdDevPSD);
+            str3 = sprintf('Tolerance: +-%0.2f%%', obj.tolerancePSD);
+            str = [str1, newline, str2, newline, str3];
+            text(0.5, 0.95, str, 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline');
+            set(ax, 'visible', 'off');
+            set(ax.Title, 'visible', 'on');
         end
 
         function builtSignal = buildPSDSig(obj, volt)
