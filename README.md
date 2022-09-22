@@ -60,3 +60,5 @@ There are some important things to be aware of in taking this data. Be sure that
 Assuming that the data was properly retrieved and put in the proper locations, the program should be very easy to run while still very informative. The entire program is run from the instantiation of the Mic object. The Mic constructor is designed to take in the select few data parameters, immediately calculate and store all other numerical parameters, and then list and plot all frequency response and power spectral density details all from the single object instantion. If one retrieved data for multiple mics and instantiated objects for each mic, it would result in a separate figure for each mic.
 
 To be continued...
+
+Or not. Currently in the works of changing this program into python and building on the analyzed spectral characteristics even more (my master's thesis will partially be based on this). Initial commits are to come in the next couple of months!
